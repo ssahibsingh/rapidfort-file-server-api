@@ -1,0 +1,21 @@
+name: Run Docker Containers
+
+on:
+  push:
+    branches:
+      - main
+
+jobs: 
+  run-containers:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker
+        uses: docker/setup-docker@v2
+
+      - name: Run containers
+        run: |
+          ./start-containers.sh
