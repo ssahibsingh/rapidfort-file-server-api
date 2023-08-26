@@ -1,0 +1,24 @@
+name: Backend Docker Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Build backend Docker image
+        run: |
+          docker build -t backend-image backend/
+          docker images
