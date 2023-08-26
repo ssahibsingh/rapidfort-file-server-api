@@ -43,6 +43,11 @@ h1 {
   margin-top: 10px;
 }
 
+.m-auto{
+  margin: auto;
+  display: block;
+}
+
 .submit-button {
   background-color: #012852;
   border: none;
