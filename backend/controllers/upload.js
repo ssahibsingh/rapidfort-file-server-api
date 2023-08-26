@@ -2,6 +2,13 @@ import { BlockBlobClient } from "@azure/storage-blob";
 import getStream from "into-stream";
 import File from "../models/File.js";
 
+const formatFileSize = (bytes) => {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes === 0) return '0 Byte';
+    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+};
+
 const uploadFile = async (req, res) => {
     try {
         const file = req.files.file
@@ -25,7 +32,7 @@ const uploadFile = async (req, res) => {
         // File Info to be stored in MongoDB
         const metadata = {
             filename: blobName,
-            size: file.size,
+            size: formatFileSize(file.size),
             contentType: file.mimetype
         }
 

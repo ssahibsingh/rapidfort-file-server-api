@@ -6,7 +6,7 @@ const FileSchema = new Schema({
         type: String,
         unique: true,
     },
-    size: Number,
+    size: String,
     contentType: String,
     createdAt: {
         type: Date,
