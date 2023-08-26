@@ -24,4 +24,7 @@ jobs:
           docker build -t backend-image backend/
 
       - name: Run containers
-        run: ./start-containers.sh
+        shell: bash
+        run: |
+          docker run -d -p 3000:3000 frontend-image
+          docker run -d -p 8000:8000 backend-image
