@@ -23,12 +23,12 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          docker build -t ssahibsingh/rf-file-server-frontend:latest ./frontend
-          docker build -t ssahibsingh/rf-file-server-backend:latest ./backend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/rf-file-server-frontend:latest ./frontend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/rf-file-server-backend:latest ./backend
 
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-          docker push ssahibsingh/rf-file-server-frontend:latest
-          docker push ssahibsingh/rf-file-server-backend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/rf-file-server-frontend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/rf-file-server-backend:latest
 
   deploy:
     needs: build
@@ -43,9 +43,8 @@ jobs:
 
       - name: Deploy to Azure VM
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/authorized_keys
-          chmod 600 ~/.ssh/authorized_keys
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private-key.pem
+          chmod 600 private-key.pem
 
-          scp -r ./azure-deployment/ azureuser@20.204.47.49:~/rfCode/
-          ssh azureuser@20.204.47.49 "cd ~/rfCode/azure-deployment && kubectl apply -f frontend-deployment.yaml && kubectl apply -f backend-deployment.yaml"
+          scp -i private-key.pem ./azure-deployment/ azureuser@20.204.47.49:~/rfCode/
+          ssh -i private-key.pem azureuser@20.204.47.49 "cd ~/rfCode/azure-deployment && kubectl apply -f frontend-deployment.yaml && kubectl apply -f backend-deployment.yaml"
