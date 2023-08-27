@@ -41,6 +41,11 @@ jobs:
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
 
+      - name: Add Azure VM's host key to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 20.204.47.49 >> ~/.ssh/known_hosts
+
       - name: Deploy to Azure VM
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > private-key.pem
