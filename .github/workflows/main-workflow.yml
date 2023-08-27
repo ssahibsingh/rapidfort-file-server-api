@@ -51,5 +51,5 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > private-key.pem
           chmod 600 private-key.pem
 
-          scp -i private-key.pem ./azure-deployment/ azureuser@20.204.47.49:~/rfCode/
+          scp -i private-key.pem -r ./azure-deployment/ azureuser@20.204.47.49:~/rfCode/
           ssh -i private-key.pem azureuser@20.204.47.49 "cd ~/rfCode/azure-deployment && kubectl apply -f frontend-deployment.yaml && kubectl apply -f backend-deployment.yaml"
