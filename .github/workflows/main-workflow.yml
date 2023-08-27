@@ -44,12 +44,12 @@ jobs:
       - name: Add Azure VM's host key to known hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H 20.204.47.49 >> ~/.ssh/known_hosts
+          ssh-keyscan -H 20.219.27.177 >> ~/.ssh/known_hosts
 
       - name: Deploy to Azure VM
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > private-key.pem
           chmod 600 private-key.pem
 
-          scp -i private-key.pem -r ./azure-deployment/ azureuser@20.204.47.49:~/rfCode/
-          ssh -i private-key.pem azureuser@20.204.47.49 "cd ~/rfCode/azure-deployment && kubectl apply -f frontend-deployment.yaml && kubectl apply -f backend-deployment.yaml"
+          scp -i private-key.pem -r ./azure-deployment/ azureuser@20.219.27.177:~/rfCode/
+          ssh -i private-key.pem azureuser@20.219.27.177 "cd ~/rfCode/azure-deployment && kubectl apply -f frontend-deployment.yaml && kubectl apply -f backend-deployment.yaml"

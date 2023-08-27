@@ -17,6 +17,12 @@ spec:
           image: ssahibsingh/rf-file-server-frontend:latest
           ports:
             - containerPort: 3000
+          env:
+            - name: BACKEND_URL
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: backendUrl
 
 ---
 apiVersion: v1
@@ -31,3 +37,12 @@ spec:
       port: 3000
       targetPort: 3000
   type: NodePort
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secrets
+type: Opaque
+data:
+  backendUrl: aHR0cDovL2xvY2FsaG9zdDo4MDAwL2FwaQ==

@@ -17,6 +17,22 @@ spec:
           image: ssahibsingh/rf-file-server-backend:latest
           ports:
             - containerPort: 8000
+          env:
+            - name: PORT
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: port
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: mongodbUri
+            - name: AZURE_STORAGE_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: azureConnectionString
 
 ---
 apiVersion: v1
@@ -31,3 +47,14 @@ spec:
       port: 8000
       targetPort: 8000
   type: NodePort
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secrets
+type: Opaque
+data:
+  port: ODAwMA==
+  mongodbUri: bW9uZ29kYitzcnY6Ly9hZG1pbi1leG5vbmU6bk5vbmUyMDE5QGNsdXN0ZXIwLmpmdGxuOHAubW9uZ29kYi5uZXQvdXBsb2Fkcz9yZXRyeVdyaXRlcz10cnVlJnc9bWFqb3JpdHk=
+  azureConnectionString: RGVmYXVsdEVuZHBvaW50c1Byb3RvY29sPWh0dHBzO0FjY291bnROYW1lPWZpbGVzZXJ2ZXJhcGk7QWNjb3VudEtleT00UzVLWXNzeGdFVWRnMDhxOU4rN1ZxM2VscHh5RTNNaTlBTmgyUmgxWDFXSXpmM09sMHlWaks4by9DNVIzVW1UbG9INGNLaEMxWGNBK0FTdFN6eWdQUT09O0VuZHBvaW50U3VmZml4PWNvcmUud2luZG93cy5uZXQ=
