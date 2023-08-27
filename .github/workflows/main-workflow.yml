@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,13 +18,34 @@ jobs:
         with:
           node-version: 18
 
-      - name: Build Docker images
+      - name: Build and push Docker images
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          docker build -t frontend-image frontend/
-          docker build -t backend-image backend/
+          docker build -t ssahibsingh/rf-file-server-frontend:latest ./frontend
+          docker build -t ssahibsingh/rf-file-server-backend:latest ./backend
 
-      - name: Run containers
-        shell: bash
-        run: |
-          docker run -d -p 3000:3000 frontend-image
-          docker run -d -p 8000:8000 backend-image
+          echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+          docker push ssahibsingh/rf-file-server-frontend:latest
+          docker push ssahibsingh/rf-file-server-backend:latest
+
+  deploy:
+  needs: build
+  runs-on: ubuntu-latest
+
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v3
+
+    - name: Deploy to Azure VM
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/authorized_keys
+        chmod 600 ~/.ssh/authorized_keys
+
+        scp -r ./azure-deployment/ azureuser@20.204.47.49:~/rfCode/
+        ssh azureuser@20.204.47.49 "cd ~/rfCode/azure-deployment && kubectl apply -f frontend-deployment.yaml && kubectl apply -f backend-deployment.yaml"
